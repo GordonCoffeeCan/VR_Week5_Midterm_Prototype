@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour {
     public float rotationSpeed = 8;
     public Transform cameraHolder;
     public Animator pistolAnim;
+    public Transform laserPivot;
 
     private CharacterController _characterController;
     private Vector3 _moveDir;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour {
         if (GvrController.ClickButtonDown) {
             //Debug.Log("Clicked!");
             pistolAnim.SetBool("isFire", true);
+            FireWeapon();
         } else {
             pistolAnim.SetBool("isFire", false);
         }
@@ -45,5 +47,14 @@ public class PlayerController : MonoBehaviour {
         _moveDir.y -= _gravity * Time.deltaTime;
         _characterController.Move(_moveDir * Time.deltaTime);
         cameraHolder.transform.position = new Vector3(_transfrom.position.x, _transfrom.position.y, _transfrom.position.z);
+    }
+
+    private void FireWeapon() {
+        Ray _ray = new Ray(laserPivot.position, laserPivot.forward);
+        RaycastHit _rayHit;
+
+        if (Physics.Raycast(_ray, out _rayHit, 1000)) {
+            Debug.Log(_rayHit.collider.name);
+        }
     }
 }
