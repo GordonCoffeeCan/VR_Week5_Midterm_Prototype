@@ -7,17 +7,20 @@ public class PlayerController : MonoBehaviour {
     public Transform cameraHolder;
     public Animator pistolAnim;
     public Transform laserPivot;
+    public Transform balloonParticle;
 
     private CharacterController _characterController;
     private Vector3 _moveDir;
     private Transform _transfrom;
     private float _gravity = 20;
     private Transform _mainCamera;
+    private AudioSource _weaponFireAudio;
 
     private void Awake() {
         _transfrom = this.transform;
         _mainCamera = Camera.main.transform;
         _characterController = this.GetComponent<CharacterController>();
+        _weaponFireAudio = this.GetComponent<AudioSource>();
     }
 
     // Use this for initialization
@@ -31,6 +34,7 @@ public class PlayerController : MonoBehaviour {
             //Debug.Log("Clicked!");
             pistolAnim.SetBool("isFire", true);
             FireWeapon();
+            _weaponFireAudio.Play();
         } else {
             pistolAnim.SetBool("isFire", false);
         }
@@ -51,10 +55,14 @@ public class PlayerController : MonoBehaviour {
 
     private void FireWeapon() {
         Ray _ray = new Ray(laserPivot.position, laserPivot.forward);
-        RaycastHit _rayHit;
+        RaycastHit _rayHit = new RaycastHit();
 
-        if (Physics.Raycast(_ray, out _rayHit, 1000)) {
-            Debug.Log(_rayHit.collider.name);
+        if (Physics.Raycast(_ray, out _rayHit)) {
+            if(_rayHit.collider.tag == "Balloon") {
+                Destroy(_rayHit.collider.gameObject);
+                GameManager.isBalloonSet = false;
+                Instantiate(balloonParticle, _rayHit.collider.transform.position, Quaternion.Euler(-90, 0, 0));
+            }
         }
     }
 }

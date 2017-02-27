@@ -27,7 +27,7 @@ public class TouchPosTranslater : MonoBehaviour {
 
         if (GvrController.IsTouching) {
             _deltaTouchPoint = GvrController.TouchPos - _originalTouchPoint;
-            if (_deltaTouchPoint.magnitude > 0.1f) {
+            if (_deltaTouchPoint.magnitude > 0.25f) {
                 touchPos = new Vector2((GvrController.TouchPos.x - _originalTouchPoint.x) / _middleX, (GvrController.TouchPos.y - _originalTouchPoint.y) / _middleY * -1);
             }
         } else if (!GvrController.IsTouching) {
