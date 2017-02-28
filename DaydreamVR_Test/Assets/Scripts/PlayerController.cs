@@ -68,8 +68,7 @@ public class PlayerController : MonoBehaviour {
 
             if (_rayHit.collider.GetComponent<Rigidbody>() != null) {
                 Rigidbody _rig = _rayHit.collider.GetComponent<Rigidbody>();
-                _rig.AddForce(-_rayHit.point * 2, ForceMode.Impulse);
-                _rig.AddTorque(_rayHit.point * 2, ForceMode.Impulse);
+                _rig.AddForceAtPosition(laserPivot.forward * 5, _rayHit.point, ForceMode.Impulse);
             }
         }
     }
@@ -79,8 +78,6 @@ public class PlayerController : MonoBehaviour {
         RaycastHit _rayHit = new RaycastHit();
 
         if (Physics.Raycast(_ray, out _rayHit)) {
-            Debug.Log(_rayHit.distance);
-
             if(_rayHit.distance <= 20 && _rayHit.distance > 2.5f) {
                 GvrLaserPointer.maxReticleDistance = Mathf.Lerp(GvrLaserPointer.maxReticleDistance, _rayHit.distance, 0.25f);
             }else if (_rayHit.distance > 20) {

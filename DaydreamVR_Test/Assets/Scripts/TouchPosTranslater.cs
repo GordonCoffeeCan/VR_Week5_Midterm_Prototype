@@ -34,6 +34,6 @@ public class TouchPosTranslater : MonoBehaviour {
             touchPos = Vector2.zero;
             _deltaTouchPoint = Vector2.zero;
         }
-        //Debug.Log();
+        
 	}
 }
