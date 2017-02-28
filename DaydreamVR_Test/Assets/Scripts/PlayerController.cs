@@ -30,14 +30,16 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        
         if (GvrController.ClickButtonDown) {
-            //Debug.Log("Clicked!");
             pistolAnim.SetBool("isFire", true);
             FireWeapon();
             _weaponFireAudio.Play();
         } else {
             pistolAnim.SetBool("isFire", false);
         }
+
+        MeasureDistance();
     }
 
     private void FixedUpdate() {
@@ -61,7 +63,28 @@ public class PlayerController : MonoBehaviour {
             if(_rayHit.collider.tag == "Balloon") {
                 Destroy(_rayHit.collider.gameObject);
                 GameManager.isBalloonSet = false;
-                Instantiate(balloonParticle, _rayHit.collider.transform.position, Quaternion.Euler(-90, 0, 0));
+                Instantiate(balloonParticle, new Vector3(_rayHit.collider.transform.position.x, _rayHit.collider.transform.position.y + 0.25f, _rayHit.collider.transform.position.z), Quaternion.Euler(-90, 0, 0));
+            }
+
+            if (_rayHit.collider.GetComponent<Rigidbody>() != null) {
+                Rigidbody _rig = _rayHit.collider.GetComponent<Rigidbody>();
+                _rig.AddForce(-_rayHit.point * 2, ForceMode.Impulse);
+                _rig.AddTorque(_rayHit.point * 2, ForceMode.Impulse);
+            }
+        }
+    }
+
+    private void MeasureDistance() {
+        Ray _ray = new Ray(laserPivot.position, laserPivot.forward);
+        RaycastHit _rayHit = new RaycastHit();
+
+        if (Physics.Raycast(_ray, out _rayHit)) {
+            Debug.Log(_rayHit.distance);
+
+            if(_rayHit.distance <= 20 && _rayHit.distance > 2.5f) {
+                GvrLaserPointer.maxReticleDistance = Mathf.Lerp(GvrLaserPointer.maxReticleDistance, _rayHit.distance, 0.25f);
+            }else if (_rayHit.distance > 20) {
+                GvrLaserPointer.maxReticleDistance = Mathf.Lerp(GvrLaserPointer.maxReticleDistance, 20, 0.25f);
             }
         }
     }
